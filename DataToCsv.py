@@ -115,21 +115,6 @@ class Queries():
 
 
 
-
-        #txoutxt_detail_dict = session.execute(select(Txout_Detail.chain_id, Txout_Detail.in_longest,
-                                               #Txout_Detail.block_id, Txout_Detail.block_hash,
-                                               #Txout_Detail.block_height, Txout_Detail.tx_pos,
-                                               #Txout_Detail.tx_id, Txout_Detail.tx_hash,
-                                               #Txout_Detail.tx_lockTime, Txout_Detail.tx_version,
-                                               #Txout_Detail.tx_size, Txout_Detail.txout_id,
-                                               #Txout_Detail.txout_pos, Txout_Detail.txout_value,
-                                               #Txout_Detail.txout_scriptPubKey, Txout_Detail.pubkey_id,
-                                               #Txout_Detail.pubkey_hash,
-                                               #Txout_Detail.pubkey)).mappings().all()
-
-        #return txoutxt_detail_dict
-
-
     def norm(self):
 
         """
@@ -228,8 +213,9 @@ class Queries():
 
     def append_to_csv(self,filename):
 
-        fields = ['chain_id', 'in_longest', 'block_id', 'block_hash', 'block_height', 'tx_pos', 'tx_id',
-                  'tx_hash', 'tx_lockTime', 'tx_version', 'tx_size', 'txout_id', 'txout_pos', 'txout_value',
+        fields = ['chain_id', 'in_longest', 'block_id', 'block_hash',
+                  'block_height', 'tx_pos', 'tx_id','tx_hash',
+                  'tx_lockTime', 'tx_version', 'tx_size', 'txout_id', 'txout_pos', 'txout_value',
                   'txout_scriptPubKey', 'pubkey_id', 'pubkey_hash', 'pubkey']
 
         txoutxt_detail_dict_new = self.create_new_dict()
