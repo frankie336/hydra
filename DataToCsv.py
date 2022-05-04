@@ -123,15 +123,8 @@ class Queries():
 
         file_exists = os.path.exists(folder+'/'+filename+'.txt')
 
-        print(file_exists)
-
-        if file_exists == False:
-            print('Creating a new tracker file!')
-            with open(folder+'/'+filename+'.txt', 'w') as f:
-                f.write(last_number)
-        else:
-            print('Tracking file is already there!')
-            pass
+        with open(folder+'/'+filename+'.txt', 'w') as f:
+            f.write(last_number)
 
 
 
@@ -142,7 +135,7 @@ class Queries():
         row_per = self.rows_percent(percentage=1)
         self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(row_per))
 
-        print(row_per)
+        #print(row_per)
 
 
     def read_tracker_file(self,folder,filename):
@@ -150,7 +143,7 @@ class Queries():
         with open(folder+'/'+filename+'.txt') as f:
             firstline = f.readline().rstrip()
 
-        return firstline
+        return int(firstline)
 
 
 
@@ -195,6 +188,35 @@ class Queries():
             row_as_dict = row._mapping
             row_list.append(row_as_dict)
 
+
+        """
+        Update the Tracker file here 
+        """
+        #self.setting_the_start_row()
+
+        row_per = self.rows_percent(percentage=1)
+        current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename='/txout_detail')
+
+        print(current_numb)
+
+        new_numb = current_numb+row_per
+
+        if current_numb == row_per:
+            change_num = new_numb
+            self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(change_num))
+        else:
+            pass
+
+        if current_numb > row_per:
+            change_num = new_numb
+            self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(change_num))
+
+
+
+
+
+
+
         return row_list
 
 
@@ -224,7 +246,9 @@ class Queries():
 
         rows_percent = self.rows_percent(1)
 
-        txoutxt_detail_dicts = self.query_txout_detail(limit=rows_percent,offset=0)
+        offset_to = self.read_tracker_file(folder=_dir + '/tracking', filename='/txout_detail')
+
+        txoutxt_detail_dicts = self.query_txout_detail(limit=rows_percent,offset=offset_to)
 
 
 
@@ -253,6 +277,12 @@ class Queries():
         """
         Creates .csv file with base headers
         """
+
+        file_exists = os.path.exists(filename + '.csv')
+
+        if file_exists == True:
+            return
+
         with open(filename+'.csv', 'w') as f:
             w = csv.DictWriter(f, fieldnames=self.txin_detail_fields)
             w.writeheader()
@@ -276,8 +306,6 @@ class Queries():
 
     def chained(self):
 
-        self.setting_the_start_row()
-
         #self.tracker()
 
         #self.read_tracker_file(folder=_dir + '/tracking',filename='/txout_detail')
@@ -288,11 +316,11 @@ class Queries():
         Create .csv file
         """
         filename ='test'
-        #self.create_csv(filename)
+        self.create_csv(filename)
         """
         Append results to the .csv file 
         """
-        #self.append_to_csv(filename)
+        self.append_to_csv(filename)
 
 
 
