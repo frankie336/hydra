@@ -176,6 +176,12 @@ class Queries():
 
     def query_txout_detail(self,limit,offset):
 
+        """
+        write the start positing to file 
+        """
+        row_per = self.rows_percent(percentage=1)
+        self.write_files(folder=_dir + '/tracking', filename='/txout_detail_start_pos', last_number=str(row_per))
+
         row_list = []
 
         conn = engine.connect()
@@ -192,32 +198,37 @@ class Queries():
         """
         Update the Tracker file here 
         """
-        #self.setting_the_start_row()
+        self.track_index(filename='/txout_detail')
 
+        return row_list
+
+
+    def track_index(self,filename):
+        """
+        Update the Tracker file here
+        """
         row_per = self.rows_percent(percentage=1)
         current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename='/txout_detail')
+        start_pos = self.rows_percent(1)
+        new_numb = current_numb + row_per
 
-        print(current_numb)
+        if current_numb == 0:
+            change_num = start_pos
+            self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(change_num))
+        else:
+            pass
 
-        new_numb = current_numb+row_per
-
-        if current_numb == row_per:
+        if current_numb == start_pos:
+            new_numb = current_numb + row_per
             change_num = new_numb
             self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(change_num))
         else:
             pass
 
-        if current_numb > row_per:
+        if current_numb > start_pos:
+            new_numb = current_numb + row_per
             change_num = new_numb
             self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(change_num))
-
-
-
-
-
-
-
-        return row_list
 
 
 
@@ -246,7 +257,12 @@ class Queries():
 
         rows_percent = self.rows_percent(1)
 
-        offset_to = self.read_tracker_file(folder=_dir + '/tracking', filename='/txout_detail')
+        current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename='/txout_detail')
+
+        if current_numb == rows_percent:
+            offset_to = 0
+        else:
+            offset_to = self.read_tracker_file(folder=_dir + '/tracking', filename='/txout_detail')
 
         txoutxt_detail_dicts = self.query_txout_detail(limit=rows_percent,offset=offset_to)
 
