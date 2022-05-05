@@ -86,6 +86,7 @@ class Queries():
     """
     This class is the parent class for queries
     """
+    ROW_PER = 2
     def __init__(self):
 
         self.txin_detail_fields = ['chain_id', 'in_longest', 'block_id', 'block_hash',
@@ -107,14 +108,26 @@ class Queries():
         percent = rows_number/100*percentage
 
         rounded = math.ceil(percent)
-        print(rounded)
+        print(rounded,'in chunks')
 
         return  rounded
 
-
-
         text_file = open(_dir+"/tracking/txout_detail.txt", "w")
         n = text_file.write(str(rounded))
+
+
+
+    def set_initial_size(self,filename):
+
+        row_per = self.rows_percent(percentage=Queries.ROW_PER)
+        current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename=filename)
+
+        if current_numb > row_per:
+            print('Yeah, ok')
+            return
+        else:
+            self.write_files(folder=_dir + '/tracking', filename=filename, last_number=str(row_per))
+
 
 
 
@@ -129,47 +142,14 @@ class Queries():
 
 
 
-
-    def tracker(self):
-
-        row_per = self.rows_percent(percentage=1)
-        self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(row_per))
-
-        #print(row_per)
-
-
     def read_tracker_file(self,folder,filename):
 
         with open(folder+'/'+filename+'.txt') as f:
             firstline = f.readline().rstrip()
 
+            print(firstline)
+
         return int(firstline)
-
-
-
-    def track_csv(self):
-
-        rows_percent = self.rows_percent(1)
-        print(rows_percent+rows_percent)
-
-
-    def setting_the_start_row(self):
-
-        percentage = self.rows_percent(percentage=1)
-        current_row_is = self.read_tracker_file(folder=_dir + '/tracking', filename='/txout_detail')
-        print(percentage)
-        print(current_row_is)
-
-        if percentage == int(current_row_is):
-            print('New')
-            return 0
-
-        if int(current_row_is) > percentage:
-            print('old')
-
-
-        self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(percentage))
-
 
 
 
@@ -179,7 +159,7 @@ class Queries():
         """
         write the start positing to file 
         """
-        row_per = self.rows_percent(percentage=1)
+        row_per = self.rows_percent(percentage=Queries.ROW_PER)
         self.write_files(folder=_dir + '/tracking', filename='/txout_detail_start_pos', last_number=str(row_per))
 
         row_list = []
@@ -208,13 +188,13 @@ class Queries():
         Update the Tracker file here
         """
         row_per = self.rows_percent(percentage=1)
-        current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename='/txout_detail')
-        start_pos = self.rows_percent(1)
+        current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename=filename)
+        start_pos = self.rows_percent(percentage=Queries.ROW_PER)
         new_numb = current_numb + row_per
 
         if current_numb == 0:
             change_num = start_pos
-            self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(change_num))
+            self.write_files(folder=_dir + '/tracking', filename=filename, last_number=str(change_num))
         else:
             pass
 
@@ -230,6 +210,19 @@ class Queries():
             change_num = new_numb
             self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(change_num))
 
+
+
+    def set_offset(self,filename):
+
+        rows_percent = self.rows_percent(percentage=Queries.ROW_PER)
+        current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename=filename)
+
+        if current_numb == rows_percent:
+            offset_to = 0
+        else:
+            offset_to = self.read_tracker_file(folder=_dir + '/tracking', filename=filename)
+
+        return offset_to
 
 
 
@@ -251,22 +244,14 @@ class Queries():
                      'block_height': 0, 'tx_pos': 0,'tx_id': 0,'tx_hash': 0,
                      'tx_lockTime': 0, 'tx_version': 0, 'tx_size': 0, 'txout_id': 0,
                      'txout_pos': 0,'txout_value': 0,'txout_scriptPubKey': 0, 'pubkey_id': 0,
-                     'pubkey_hash': 0, 'pubkey': 10
+                     'pubkey_hash': 0, 'pubkey': 0
 
                      }
 
-        rows_percent = self.rows_percent(1)
-
-        current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename='/txout_detail')
-
-        if current_numb == rows_percent:
-            offset_to = 0
-        else:
-            offset_to = self.read_tracker_file(folder=_dir + '/tracking', filename='/txout_detail')
+        rows_percent = self.rows_percent(percentage=Queries.ROW_PER)
+        offset_to = self.set_offset(filename='/txout_detail')
 
         txoutxt_detail_dicts = self.query_txout_detail(limit=rows_percent,offset=offset_to)
-
-
 
         txoutxt_detail_dicts_new = []
 
@@ -295,7 +280,6 @@ class Queries():
         """
 
         file_exists = os.path.exists(filename + '.csv')
-
         if file_exists == True:
             return
 
@@ -318,16 +302,9 @@ class Queries():
 
 
 
+    def main(self):
 
-
-    def chained(self):
-
-        #self.tracker()
-
-        #self.read_tracker_file(folder=_dir + '/tracking',filename='/txout_detail')
-
-        #self.track_csv()
-
+        self.set_initial_size(filename='/txout_detail')
         """
         Create .csv file
         """
@@ -447,4 +424,4 @@ class ColumnsBase():
 
 
 a = Queries()
-a.chained()
+a.main()
