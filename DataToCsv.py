@@ -1,5 +1,6 @@
 import csv
 import math
+from math import floor
 import os
 
 from sqlalchemy import create_engine, MetaData, Table
@@ -87,7 +88,7 @@ class Queries():
     This class is the parent class for queries
     """
     ROW_PER = 2
-    def __init__(self):
+    def __init__(self,rows,percent,offset):
 
         self.txin_detail_fields = ['chain_id', 'in_longest', 'block_id', 'block_hash',
                        'block_height', 'tx_pos', 'tx_id','tx_hash',
@@ -95,15 +96,48 @@ class Queries():
                        'txout_pos', 'txout_value','txout_scriptPubKey',
                        'pubkey_id', 'pubkey_hash', 'pubkey']
 
-    def count_rows(self,table):
+        self.__total_rows = rows
+        self.__rows_percent = percent
+        self.__offset = offset
+
+    def set_rows(self, rows):
+
+        self.__total_rows = rows
+
+    def get_rows(self):
+        return self.__total_rows
+
+    def set_percent(self, percent):
+        self.__rows_percent = percent
+
+    def get_percent(self):
+        return self.__rows_percent
+
+    def set_offset(self, offset):
+        self.__offset = offset
+
+    def get_offset(self):
+        return self.__offset
+
+
+
+
+    def query_total_rows(self, table):
 
         rows_number = session.query(table).count()
 
         return rows_number
 
-    def rows_percent(self,percentage):
+    def floor_division(self, a, b):
 
-        rows_number = self.count_rows(Txout_Detail)
+        floor_x = floor(a / b)
+        remainder_y = (a % b)
+
+        return floor_x, remainder_y
+
+    def in_chunks(self, percentage):
+
+        rows_number = self.query_total_rows(Txout_Detail)
 
         percent = rows_number/100*percentage
 
@@ -119,7 +153,7 @@ class Queries():
 
     def set_initial_size(self,filename):
 
-        row_per = self.rows_percent(percentage=Queries.ROW_PER)
+        row_per = self.in_chunks(percentage=self.__rows_percent)
         current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename=filename)
 
         if current_numb > row_per:
@@ -159,7 +193,7 @@ class Queries():
         """
         write the start positing to file 
         """
-        row_per = self.rows_percent(percentage=Queries.ROW_PER)
+        row_per = self.in_chunks(percentage=self.__rows_percent)
         self.write_files(folder=_dir + '/tracking', filename='/txout_detail_start_pos', last_number=str(row_per))
 
         row_list = []
@@ -187,9 +221,9 @@ class Queries():
         """
         Update the Tracker file here
         """
-        row_per = self.rows_percent(percentage=1)
+        row_per = self.in_chunks(percentage=1)
         current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename=filename)
-        start_pos = self.rows_percent(percentage=Queries.ROW_PER)
+        start_pos = self.in_chunks(percentage=self.__rows_percent)
         new_numb = current_numb + row_per
 
         if current_numb == 0:
@@ -214,7 +248,7 @@ class Queries():
 
     def set_offset(self,filename):
 
-        rows_percent = self.rows_percent(percentage=Queries.ROW_PER)
+        rows_percent = self.in_chunks(percentage=self.__rows_percent)
         current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename=filename)
 
         if current_numb == rows_percent:
@@ -248,7 +282,7 @@ class Queries():
 
                      }
 
-        rows_percent = self.rows_percent(percentage=Queries.ROW_PER)
+        rows_percent = self.in_chunks(percentage=self.__rows_percent)
         offset_to = self.set_offset(filename='/txout_detail')
 
         txoutxt_detail_dicts = self.query_txout_detail(limit=rows_percent,offset=offset_to)
@@ -304,16 +338,32 @@ class Queries():
 
     def main(self):
 
-        self.set_initial_size(filename='/txout_detail')
-        """
-        Create .csv file
-        """
-        filename ='test'
-        self.create_csv(filename)
-        """
-        Append results to the .csv file 
-        """
-        self.append_to_csv(filename)
+        self.set_percent(percent=2)  # 1-set the row precentage per pass
+        total_rows = self.query_total_rows(Txout_Detail)  #2
+        self.set_rows(total_rows)  #3
+
+        chunks = self.in_chunks(percentage=self.__rows_percent)
+        floor_div = self.floor_division(a=self.__total_rows, b=chunks)
+        loop_floor_range = floor_div[0]
+        remainder = floor_div[1]
+
+
+
+        print('The chunk is:',chunks,'\n',
+            'The loop floor is:',loop_floor_range,'\n',
+              'The remainder is:',remainder)
+
+
+        for x in range(loop_floor_range):
+            """
+            Create .csv file and headers
+            """
+            filename ='test'
+            self.create_csv(filename)
+            """
+            Append results to the .csv file
+            """
+            self.append_to_csv(filename)
 
 
 
@@ -423,5 +473,5 @@ class ColumnsBase():
 
 
 
-a = Queries()
+a = Queries(rows=0,percent=0,offset=0)
 a.main()
