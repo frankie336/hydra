@@ -261,7 +261,7 @@ class Queries():
 
 
 
-    def create_new_dict(self):
+    def create_new_dict(self,offset):
         """
         Some fields from the abe Mysql tables have assigned data types as C++ x0 bytes.
         Python reads these encoded,example: '\x04\x04\xfbJ\xf1\x16\x98X\x8f\x00\ ...'.
@@ -283,9 +283,10 @@ class Queries():
                      }
 
         rows_percent = self.in_chunks(percentage=self.__rows_percent)
-        offset_to = self.set_offset(filename='/txout_detail')
 
-        txoutxt_detail_dicts = self.query_txout_detail(limit=rows_percent,offset=offset_to)
+        #offset_to = self.set_offset(filename='/txout_detail')
+
+        txoutxt_detail_dicts = self.query_txout_detail(limit=rows_percent,offset=offset)
 
         txoutxt_detail_dicts_new = []
 
@@ -322,11 +323,11 @@ class Queries():
             w.writeheader()
             #w.writerow(new_dict1)
 
-    def append_to_csv(self,filename):
+    def append_to_csv(self,filename,offset):
         """
         Appends new data to .csv
         """
-        txoutxt_detail_dict_new = self.create_new_dict()
+        txoutxt_detail_dict_new = self.create_new_dict(offset)
 
         for index in range(len(txoutxt_detail_dict_new)):
             with open(filename+'.csv', 'a') as f:
@@ -338,7 +339,7 @@ class Queries():
 
     def main(self):
 
-        self.set_percent(percent=2)  # 1-set the row precentage per pass
+        self.set_percent(percent=99)  # 1-set the row precentage per pass
         total_rows = self.query_total_rows(Txout_Detail)  #2
         self.set_rows(total_rows)  #3
 
@@ -346,12 +347,6 @@ class Queries():
         floor_div = self.floor_division(a=self.__total_rows, b=chunks)
         loop_floor_range = floor_div[0]
         remainder = floor_div[1]
-
-
-
-        print('The chunk is:',chunks,'\n',
-            'The loop floor is:',loop_floor_range,'\n',
-              'The remainder is:',remainder)
 
 
         for x in range(loop_floor_range):
@@ -363,7 +358,34 @@ class Queries():
             """
             Append results to the .csv file
             """
-            self.append_to_csv(filename)
+            offset = self.set_offset(filename='/txout_detail')
+            self.append_to_csv(filename,offset)
+
+
+        print('The chunk is:', chunks, '\n',
+              'The loop floor is:', loop_floor_range, '\n',
+              'The remainder is:', remainder)
+
+
+        if remainder == 0:
+            return
+        else:
+            print('Hello Remainder')
+            offset = total_rows - remainder
+            self.append_to_csv(filename, offset)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
