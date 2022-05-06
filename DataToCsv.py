@@ -141,18 +141,12 @@ class Queries():
 
     def in_chunks(self, percentage):
 
-        #rows_number = self.query_total_rows(Txout_Detail)
         total_rows = self.__total_rows
 
         percent = total_rows/100*percentage
-
         rounded = math.ceil(percent)
-        print(rounded,'in chunks')
 
         return  rounded
-
-        text_file = open(_dir+"/tracking/txout_detail.txt", "w")
-        n = text_file.write(str(rounded))
 
 
 
@@ -162,11 +156,10 @@ class Queries():
         current_numb = self.read_tracker_file(folder=_dir + '/tracking', filename=filename)
 
         if current_numb > row_per:
-            print('Yeah, ok')
+
             return
         else:
             self.write_files(folder=_dir + '/tracking', filename=filename, last_number=str(row_per))
-
 
 
 
@@ -186,7 +179,7 @@ class Queries():
         with open(folder+'/'+filename+'.txt') as f:
             firstline = f.readline().rstrip()
 
-            print(firstline)
+            #print(firstline)
 
         return int(firstline)
 
@@ -305,14 +298,12 @@ class Queries():
 
             txoutxt_detail_dicts_new.append(rep_dict_base.copy())
 
-
         return txoutxt_detail_dicts_new
 
 
 
 
-
-    def create_csv(self,filename):
+    def create_base_csv(self, filename):
         """
         Creates .csv file with base headers
         """
@@ -339,13 +330,6 @@ class Queries():
                 w.writerow(txoutxt_detail_dict_new[index])
 
 
-    def test(self):
-
-        query_total_rows = self.query_total_rows(Txout_Detail)
-        self.set_rows(query_total_rows)
-
-        print(self.__total_rows)
-        pass
 
     def main(self):
         """
@@ -358,10 +342,13 @@ class Queries():
         """
         self.set_percent(percent=99)  # 1-set the row precentage per pass
 
-        #total_rows = self.query_total_rows(Txout_Detail)  #2
-        #self.set_rows(total_rows)  #3
-
+        """
+        """
         chunks = self.in_chunks(percentage=self.__rows_percent)
+        """
+        Floor division: between the number of rows processed on each pass
+        and the total number of rows in the table.
+        """
         floor_div = self.floor_division(a=self.__total_rows, b=chunks)
         loop_floor_range = floor_div[0]
         remainder = floor_div[1]
@@ -372,7 +359,7 @@ class Queries():
             Create .csv file and headers
             """
             filename ='test'
-            self.create_csv(filename)
+            self.create_base_csv(filename)
             """
             Append results to the .csv file
             """
@@ -380,11 +367,10 @@ class Queries():
             self.append_to_csv(filename,offset)
 
 
-
         if remainder == 0:
             return
         else:
-            print('Hello Remainder')
+            print('There is a remainder following the floor')
             offset = self.__total_rows - remainder
             self.append_to_csv(filename, offset)
 
@@ -393,126 +379,6 @@ class Queries():
         print('The chunk is:', chunks, '\n',
               'The loop floor is:', loop_floor_range, '\n',
               'The remainder is:', remainder)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def tx_out_detail_cols(self):
-
-        columns  = (Txout_Detail.sechain_id, Txout_Detail.in_longest,
-                    Txout_Detail.block_id, Txout_Detail.block_hash,
-                    Txout_Detail.block_height, Txout_Detail.tx_pos,
-                    Txout_Detail.tx_id, Txout_Detail.tx_hash,
-                    Txout_Detail.tx_lockTime, Txout_Detail.tx_version,
-                    Txout_Detail.tx_size, Txout_Detail.txout_id,
-                    Txout_Detail.txout_pos, Txout_Detail.txout_value,
-                    Txout_Detail.txout_scriptPubKey, Txout_Detail.pubkey_id,
-                    Txout_Detail.pubkey_hash,Txout_Detail.pubkey)
-
-        return columns
-
-
-
-
-
-class QueriesBase():
-    """
-    This class is the parent class for queries
-    """
-
-
-
-
-
-class ColumnsBase():
-    """
-    This is the base class for table column names,
-    and other elements common to all tables
-    """
-    def __init__(self):
-        self.chain_id = 'chain_id'
-        self.in_longest = 'in_longest'
-        self.block_id = 'block_id'
-        self.block_hash = 'block_hash'
-        self.block_height = 'block_height '
-        self.tx_pos = 'tx_pos'
-        self.tx_id = 'tx_id '
-        self.tx_hash = 'tx_hash'
-        self.tx_lockTime = 'tx_lockTime'
-        self.tx_version = 'tx_version'
-        self.tx_size = 'tx_size'
-        self.txout_id = 'txout_id'
-        self.txout_pos = 'txout_pos'
-        self.txout_value = 'txout_value'
-        self.txout_scriptPubKey = 'txout_scriptPubKey'
-        self.pubkey_id = 'pubkey_id'
-        self.pubkey_hash = 'pubkey_hash'
-        self.pubkey = 'pubkey'
-        self.txout_approx_value = 'txout_approx_value'
-
-        self.txin_id = 'txin_id'
-        self.txout_tx_hash = 'txout_tx_hash'
-        self.txout_pos = 'txout_pos'
-
-        self.block_version = 'block_version'
-        self.block_hashMerkleRoot= 'block_hashMerkleRoot'
-        self.block_nTime = 'block_nTime'
-        self.block_nBits = 'block_nBits'
-        self.block_nNonce = 'block_nNonce'
-        self. prev_block_id = 'prev_block_id'
-        self.search_block_id = 'search_block_id'
-        self.block_chain_work = 'block_chain_work'
-        self.block_value_in = 'block_value_in'
-        self.block_value_out = 'block_value_out'
-        self.block_total_satoshis = 'block_total_satoshis'
-        self.block_total_seconds = 'block_total_seconds'
-        self.block_satoshi_seconds = 'block_satoshi_seconds'
-        self.block_total_ss = 'block_total_ss'
-        self.block_num_tx = 'block_num_tx'
-        self.block_ss_destroyed = 'block_ss_destroyed'
-
-        self.next_block_id = 'next_block_id'
-
-        self.out_block_id ='out_block_id'
-
-        self.chain_id = 'chain_id'
-        self.chain_name = 'chain_name'
-        self.chain_code3 = 'chain_code3'
-        self.chain_address_version = 'chain_address_version'
-        self.chain_script_addr_vers = 'chain_script_addr_vers'
-        self.chain_magic = 'chain_magic'
-        self.chain_policy = 'chain_policy'
-        self.chain_decimals = 'chain_decimals'
-        self.chain_last_block_id = 'chain_last_block_id'
-
-        self.block_num_tx = 'block_num_tx'
-
-        self.multisig_id = 'multisig_id'
-
-        self.block_hashPrev = 'block_hashPrev'
-
-        self.txin_scriptSig = 'txin_scriptSig'
-        self.txin_sequence = 'txin_sequence'
-
-        self.txin_pos = 'txin_pos'
-        self.prevout_id = 'prevout_id'
-        self.txin_value  = 'txin_value '
-        self.txin_scriptPubKey  = 'txin_scriptPubKey'
-
 
 
 a = Queries(rows=0,percent=0,offset=0)
