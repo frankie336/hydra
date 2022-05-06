@@ -1,8 +1,14 @@
+"""
+local custom imports
+"""
+from Credentials import Credentials
+"""
+General package imports
+"""
 import csv
 import math
 from math import floor
 import os
-
 from sqlalchemy import create_engine, MetaData, Table
 import sqlalchemy
 from sqlalchemy import create_engine
@@ -87,7 +93,6 @@ class Queries():
     """
     This class is the parent class for queries
     """
-    ROW_PER = 2
     def __init__(self,rows,percent,offset):
 
         self.txin_detail_fields = ['chain_id', 'in_longest', 'block_id', 'block_hash',
@@ -101,7 +106,6 @@ class Queries():
         self.__offset = offset
 
     def set_rows(self, rows):
-
         self.__total_rows = rows
 
     def get_rows(self):
@@ -137,9 +141,10 @@ class Queries():
 
     def in_chunks(self, percentage):
 
-        rows_number = self.query_total_rows(Txout_Detail)
+        #rows_number = self.query_total_rows(Txout_Detail)
+        total_rows = self.__total_rows
 
-        percent = rows_number/100*percentage
+        percent = total_rows/100*percentage
 
         rounded = math.ceil(percent)
         print(rounded,'in chunks')
@@ -284,8 +289,6 @@ class Queries():
 
         rows_percent = self.in_chunks(percentage=self.__rows_percent)
 
-        #offset_to = self.set_offset(filename='/txout_detail')
-
         txoutxt_detail_dicts = self.query_txout_detail(limit=rows_percent,offset=offset)
 
         txoutxt_detail_dicts_new = []
@@ -336,12 +339,27 @@ class Queries():
                 w.writerow(txoutxt_detail_dict_new[index])
 
 
+    def test(self):
+
+        query_total_rows = self.query_total_rows(Txout_Detail)
+        self.set_rows(query_total_rows)
+
+        print(self.__total_rows)
+        pass
 
     def main(self):
-
+        """
+        Sets the total row number object
+        """
+        query_total_rows = self.query_total_rows(Txout_Detail)
+        self.set_rows(query_total_rows)
+        """
+        Sets the percentage of rows that should be processed on each pass
+        """
         self.set_percent(percent=99)  # 1-set the row precentage per pass
-        total_rows = self.query_total_rows(Txout_Detail)  #2
-        self.set_rows(total_rows)  #3
+
+        #total_rows = self.query_total_rows(Txout_Detail)  #2
+        #self.set_rows(total_rows)  #3
 
         chunks = self.in_chunks(percentage=self.__rows_percent)
         floor_div = self.floor_division(a=self.__total_rows, b=chunks)
@@ -362,17 +380,19 @@ class Queries():
             self.append_to_csv(filename,offset)
 
 
-        print('The chunk is:', chunks, '\n',
-              'The loop floor is:', loop_floor_range, '\n',
-              'The remainder is:', remainder)
-
 
         if remainder == 0:
             return
         else:
             print('Hello Remainder')
-            offset = total_rows - remainder
+            offset = self.__total_rows - remainder
             self.append_to_csv(filename, offset)
+
+
+
+        print('The chunk is:', chunks, '\n',
+              'The loop floor is:', loop_floor_range, '\n',
+              'The remainder is:', remainder)
 
 
 
