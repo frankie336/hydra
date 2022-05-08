@@ -30,7 +30,7 @@ pymysql.install_as_MySQLdb()
 _dir = os.getcwd()
 Base = declarative_base()
 
-engine = create_engine("mysql://abe:Abe2262001$@127.0.0.1/abe",echo = True,encoding='utf8')
+engine = create_engine("mysql://abe:Abe2262001$@127.0.0.1/abe",echo = False,encoding='utf8')
 
 
 
@@ -60,7 +60,7 @@ mysql> describe txoutxt_detail;
 +--------------------+---------------+------+-----+---------+-------+
 """
 
-class Txout_Detail(Base):
+class TxoutTable(Base):
     __tablename__ = 'txout_detail'
     chain_id = Column(DECIMAL(10,20), primary_key=True)
     in_longest = Column(DECIMAL(1,0))
@@ -142,7 +142,7 @@ class Txin_Detail(Base):
 Session = sessionmaker(bind=engine)
 session = Session()
 
-class Queries():
+class QueriesBase():
     """
     This class is the parent class for queries
     """
@@ -285,8 +285,6 @@ class Queries():
         with open(folder+'/'+filename+'.txt') as f:
             firstline = f.readline().rstrip()
 
-            #print(firstline)
-
         return int(firstline)
 
 
@@ -303,10 +301,7 @@ class Queries():
         row_list = []
 
         conn = engine.connect()
-
-        #s = select(Txout_Detail).limit(limit).offset(offset) <--
         s = select(table).limit(limit).offset(offset)
-
         result = conn.execute(s)
 
         for row in result:
@@ -340,14 +335,14 @@ class Queries():
         if current_numb == start_pos:
             new_numb = current_numb + row_per
             change_num = new_numb
-            self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(change_num))
+            self.write_files(folder=_dir + '/tracking', filename=filename, last_number=str(change_num))
         else:
             pass
 
         if current_numb > start_pos:
             new_numb = current_numb + row_per
             change_num = new_numb
-            self.write_files(folder=_dir + '/tracking', filename='/txout_detail', last_number=str(change_num))
+            self.write_files(folder=_dir + '/tracking', filename=filename, last_number=str(change_num))
 
 
 
@@ -379,13 +374,6 @@ class Queries():
         byte_columns = ['block_hash','tx_hash','pubkey_hash',
                         'pubkey','txout_scriptPubKey','txin_scriptSig']
 
-        rep_dict_base = {'chain_id': 0, 'in_longest': 0, 'block_id': 0, 'block_hash': 0,
-                     'block_height': 0, 'tx_pos': 0,'tx_id': 0,'tx_hash': 0,
-                     'tx_lockTime': 0, 'tx_version': 0, 'tx_size': 0, 'txout_id': 0,
-                     'txout_pos': 0,'txout_value': 0,'txout_scriptPubKey': 0, 'pubkey_id': 0,
-                     'pubkey_hash': 0, 'pubkey': 0
-
-                     }
 
         rows_percent = self.in_chunks(percentage=self.__rows_percent)
 
@@ -426,20 +414,6 @@ class Queries():
 
     def append_to_csv(self,table,fields,folder,filename,offset,track_file):
         """
-        Clean dict
-        """
-        clean_dict = {'chain_id': 0, 'in_longest': 0, 'block_id': 0, 'block_hash': 0,
-                      'block_height': 0, 'tx_pos': 0, 'tx_id': 0, 'tx_hash': 0,
-                      'tx_lockTime': 0, 'tx_version': 0, 'tx_size': 0, 'txin_id': 0,
-                      'txin_pos': 0, 'prevout_id': 0, 'txin_scriptSig': 0, 'txin_sequence': 0,
-                      'txin_value': 0, 'txin_scriptPubKey': 0, 'pubkey_id': 0, 'pubkey_hash': 0,
-                      'pubkey': 0
-
-                      }
-        #self.set_clean_dict(clean_dict)
-
-
-        """
         Appends new data to .csv
         """
         txoutxt_detail_dict_new = self.create_new_dict(offset,table=table,clean_dict=self.__clean_dict,filename=track_file)
@@ -473,19 +447,17 @@ class Queries():
         """
         floor_div = self.floor_division(a=self.__total_rows, b=chunks)
         self.set_floor_div(floor_div)
-        print(self.__floor_div)#<---
 
         loop_floor_range = floor_div[0]
         self.set_loop_floor_range(loop_floor_range)
-        print(self.__loop_floor_range)  # <---
 
         remainder = floor_div[1]
         self.set_remainder(remainder)
-        print(self.__remainder)#<---
 
 
 
-    def loop_logic(self,table,fields,field_names,file_name,track_file):
+
+    def loop_logic(self,table,fields,file_name,track_file):
 
         floor_div = self.floor_division(a=self.__total_rows, b=self.__chunks )
         loop_floor_range = floor_div[0]
@@ -494,7 +466,7 @@ class Queries():
         Create .csv file and headers
         """
         for x in range(self.__loop_floor_range):
-            self.create_base_csv(folder=_dir + '/output', filename=file_name,field_names=field_names)
+            self.create_base_csv(folder=_dir + '/output', filename=file_name,field_names=fields)
             """
             Append results to the .csv file
             """
@@ -506,16 +478,24 @@ class Queries():
         else:
             print('There is a remainder following the floor')
             offset = self.__total_rows - remainder
-
-            print(offset,'########################################################')
             self.append_to_csv(table=table,fields=fields,folder = _dir + '/output', filename =file_name,offset=offset,track_file=track_file)
 
 
-        #print('The chunk is:', chunks, '\n',
-              #'The loop floor is:', loop_floor_range, '\n',
-              #'The remainder is:', remainder)
+        print('The chunk is:',self.__chunks, '\n',
+              'The loop floor is:', self.__loop_floor_range,'\n',
+              'The remainder is:', remainder)
 
 
+
+
+
+class TxinQuery(QueriesBase):
+    def __init__(self, rows, percent, offset, floor_div,
+                 loop_floor_range, remainder, chunks,
+                 clean_dict):
+        super().__init__(rows, percent, offset, floor_div,
+                 loop_floor_range, remainder, chunks,
+                 clean_dict)
 
 
     def txin_detail_flow(self):
@@ -541,7 +521,17 @@ class Queries():
         """
         Looping
         """
-        self.loop_logic(table=Txin_Detail,field_names=self.txin_detail_fields,file_name='txin_detail',track_file='/txin_detail')
+        self.loop_logic(table=Txin_Detail,fields=self.txin_detail_fields,file_name='txin_detail',track_file='/txin_detail')
+
+
+
+class TxoutQuery(QueriesBase):
+    def __init__(self, rows, percent, offset, floor_div,
+                     loop_floor_range, remainder, chunks,
+                     clean_dict):
+        super().__init__(rows, percent, offset, floor_div,
+                             loop_floor_range, remainder, chunks,
+                             clean_dict)
 
 
     def txout_detail_flow(self):
@@ -558,44 +548,33 @@ class Queries():
         """
         Setting up
         """
-        self.set_up(table=Txout_Detail, percentage=88)
+        self.set_up(table=TxoutTable, percentage=88)
         """
         Looping
         """
-        self.loop_logic(table=Txout_Detail,fields=self.txout_detail_fields,field_names=self.txout_detail_fields, file_name='txout_detail',
+        self.loop_logic(table=TxoutTable, fields=self.txout_detail_fields, file_name='txout_detail',
                         track_file='/txout_detail')
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 def main():
     """
-
     Creates .csv for txout_detail
     """
-    #a = Queries(rows=0,percent=0,offset=0)
-    #a.txout_detail_flow()
+
     """
     creates .csv for txin_detail
     """
-    a = Queries(rows=0,percent=0,offset=0,floor_div=0,
-                loop_floor_range=0,remainder=0,chunks=0,clean_dict=None)
+    #a = QueriesBase(rows=0, percent=0, offset=0, floor_div=0,
+                    #loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
 
-    #a.txin_detail_flow()
-    a.txout_detail_flow()
+    b = TxinQuery(rows=0, percent=0, offset=0, floor_div=0,
+                  loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
+    b.txin_detail_flow()
 
+    c = TxoutQuery(rows=0, percent=0, offset=0, floor_div=0,
+                  loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
+    c.txout_detail_flow()
 
 
 main()
