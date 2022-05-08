@@ -34,6 +34,62 @@ engine = create_engine("mysql://abe:Abe2262001$@127.0.0.1/abe",echo = False,enco
 
 
 
+
+"""
+
+mysql> describe block;
++-----------------------+---------------+------+-----+---------+-------+
+| Field                 | Type          | Null | Key | Default | Extra |
++-----------------------+---------------+------+-----+---------+-------+
+| block_id              | decimal(14,0) | NO   | PRI | NULL    |       |
+| block_hash            | binary(32)    | NO   | UNI | NULL    |       |
+| block_version         | decimal(10,0) | YES  |     | NULL    |       |
+| block_hashMerkleRoot  | binary(32)    | YES  |     | NULL    |       |
+| block_nTime           | decimal(20,0) | YES  |     | NULL    |       |
+| block_nBits           | decimal(10,0) | YES  |     | NULL    |       |
+| block_nNonce          | decimal(10,0) | YES  |     | NULL    |       |
+| block_height          | decimal(14,0) | YES  |     | NULL    |       |
+| prev_block_id         | decimal(14,0) | YES  | MUL | NULL    |       |
+| search_block_id       | decimal(14,0) | YES  | MUL | NULL    |       |
+| block_chain_work      | binary(38)    | YES  |     | NULL    |       |
+| block_value_in        | decimal(30,0) | YES  |     | NULL    |       |
+| block_value_out       | decimal(30,0) | YES  |     | NULL    |       |
+| block_total_satoshis  | decimal(26,0) | YES  |     | NULL    |       |
+| block_total_seconds   | decimal(20,0) | YES  |     | NULL    |       |
+| block_satoshi_seconds | decimal(28,0) | YES  |     | NULL    |       |
+| block_total_ss        | decimal(28,0) | YES  |     | NULL    |       |
+| block_num_tx          | decimal(10,0) | NO   |     | NULL    |       |
+| block_ss_destroyed    | decimal(28,0) | YES  |     | NULL    |       |
++-----------------------+---------------+------+-----+---------+-------+
+
+"""
+
+class BlockTable(Base):
+    __tablename__ = 'block'
+    block_id = Column(DECIMAL(14,0),primary_key=True)
+    block_hash = Column(BINARY(32))
+    block_version = Column(DECIMAL(10,0))
+    block_hashMerkleRoot = Column(BINARY(32))
+    block_nTime = Column(DECIMAL(20,0))
+    block_nBits = Column(DECIMAL(10,0))
+    block_nNonce = Column(DECIMAL(10,0))
+    block_height = Column(DECIMAL(14,0))
+    prev_block_id = Column(DECIMAL(14,0))
+    search_block_id = Column(DECIMAL(14,0))
+    block_chain_work = Column(BINARY(38))
+    block_value_in = Column(DECIMAL(30,0))
+    block_value_out = Column(DECIMAL(30,0))
+    block_total_satoshis = Column(DECIMAL(26,0))
+    block_total_seconds = Column(DECIMAL(20,0))
+    block_satoshi_seconds = Column(DECIMAL(28,0))
+    block_total_ss = Column(DECIMAL(28,0))
+    block_num_tx = Column(DECIMAL(10,0))
+    block_ss_destroyed = Column(DECIMAL(28,0))
+
+
+
+
+
 """"
 mysql> describe txoutxt_detail;
 +--------------------+---------------+------+-----+---------+-------+
@@ -60,12 +116,12 @@ mysql> describe txoutxt_detail;
 +--------------------+---------------+------+-----+---------+-------+
 """
 
-class TxoutTable(Base):
+class TxoutDetailTable(Base):
     __tablename__ = 'txout_detail'
     chain_id = Column(DECIMAL(10,20), primary_key=True)
     in_longest = Column(DECIMAL(1,0))
     block_id = Column(DECIMAL(14,0))
-    block_hash = Column(BINARY())
+    block_hash = Column(BINARY(32))
     block_height = Column(DECIMAL(14,0))
     tx_pos = Column(DECIMAL(10,0))
     tx_id = Column(DECIMAL(26,0))
@@ -111,12 +167,12 @@ mysql> describe txin_detail;
 +-------------------+---------------+------+-----+---------+-------+
 
 """
-class Txin_Detail(Base):
+class TxinDetailTable(Base):
     __tablename__ = 'txin_detail'
     chain_id = Column(DECIMAL(10,20), primary_key=True)
     in_longest = Column(DECIMAL(1,0))
     block_id = Column(DECIMAL(14,0))
-    block_hash = Column(BINARY())
+    block_hash = Column(BINARY(32))
     block_height = Column(DECIMAL(14,0))
     tx_pos = Column(DECIMAL(10,0))
     tx_id = Column(DECIMAL(26,0))
@@ -166,6 +222,15 @@ class QueriesBase():
                                     'txin_sequence', 'txin_value', 'txin_scriptPubKey',
                                    'pubkey_id','pubkey_hash','pubkey'
                                    ]
+
+
+        self.block_fields = ['block_id','block_hash','block_version',
+                             'block_hashMerkleRoot','block_nTime','block_nBits','block_nNonce',
+                             'block_height','prev_block_id','search_block_id','block_chain_work',
+                             'block_value_in','block_value_out','block_total_satoshis','block_total_seconds',
+                             'block_satoshi_seconds','block_total_ss','block_num_tx','block_ss_destroyed'
+
+                             ]
 
 
 
@@ -371,8 +436,11 @@ class QueriesBase():
         -Identifies encoded byte columns from query results
         - Converts to .hex
         """
-        byte_columns = ['block_hash','tx_hash','pubkey_hash',
-                        'pubkey','txout_scriptPubKey','txin_scriptSig']
+        byte_columns = ['block_hash','tx_hash','pubkey_hash','pubkey',
+                        'txout_scriptPubKey','txin_scriptSig','block_hashMerkleRoot','block_chain_work',
+
+
+                        ]
 
 
         rows_percent = self.in_chunks(percentage=self.__rows_percent)
@@ -416,7 +484,8 @@ class QueriesBase():
         """
         Appends new data to .csv
         """
-        txoutxt_detail_dict_new = self.create_new_dict(offset,table=table,clean_dict=self.__clean_dict,filename=track_file)
+        txoutxt_detail_dict_new = self.create_new_dict(offset,table=table,clean_dict=self.__clean_dict,
+                                                       filename=track_file)
 
         for index in range(len(txoutxt_detail_dict_new)):
             with open(folder + '/' + filename + '.csv', 'a') as f:
@@ -471,19 +540,61 @@ class QueriesBase():
             Append results to the .csv file
             """
             offset = self.set_offset(filename=file_name)
-            self.append_to_csv(table=table,fields=fields,folder=_dir + '/output', filename=file_name,offset=offset,track_file=track_file)
+            self.append_to_csv(table=table,fields=fields,folder=_dir + '/output', filename=file_name,
+                               offset=offset,track_file=track_file)
 
         if self.__remainder == 0:
             return
         else:
             print('There is a remainder following the floor')
             offset = self.__total_rows - remainder
-            self.append_to_csv(table=table,fields=fields,folder = _dir + '/output', filename =file_name,offset=offset,track_file=track_file)
+            self.append_to_csv(table=table,fields=fields,folder = _dir + '/output', filename =file_name,
+                               offset=offset,track_file=track_file)
 
 
         print('The chunk is:',self.__chunks, '\n',
               'The loop floor is:', self.__loop_floor_range,'\n',
               'The remainder is:', remainder)
+
+
+
+
+
+
+
+class BlockQuery(QueriesBase):
+    def __init__(self, rows, percent, offset, floor_div,
+                 loop_floor_range, remainder, chunks,
+                 clean_dict):
+        super().__init__(rows, percent, offset, floor_div,
+                 loop_floor_range, remainder, chunks,
+                 clean_dict)
+
+
+        self.clean_dict = {'block_id': 0, 'block_hash': 0, 'block_version': 0, 'block_hashMerkleRoot': 0,
+                      'block_nTime': 0, 'block_nBits': 0, 'block_nNonce': 0, 'block_height': 0,
+                      'prev_block_id': 0, 'search_block_id': 0, 'block_chain_work': 0, 'block_value_in': 0,
+                      'block_value_out': 0, 'block_total_satoshis': 0, 'block_total_seconds': 0, 'block_satoshi_seconds': 0,
+                      'block_total_ss': 0, 'block_num_tx': 0, 'block_ss_destroyed': 0,
+
+                      }
+
+
+    def block_flow(self):
+
+        self.set_clean_dict(self.clean_dict)
+        """
+        Setting up
+        """
+        self.set_up(table=BlockTable, percentage=88)
+        """
+        Looping
+        """
+        self.loop_logic(table=BlockTable, fields=self.block_fields, file_name='block',
+                        track_file='/block')
+
+
+
 
 
 
@@ -516,12 +627,13 @@ class TxinQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=Txin_Detail,percentage=88)
+        self.set_up(table=TxinDetailTable, percentage=88)
 
         """
         Looping
         """
-        self.loop_logic(table=Txin_Detail,fields=self.txin_detail_fields,file_name='txin_detail',track_file='/txin_detail')
+        self.loop_logic(table=TxinDetailTable, fields=self.txin_detail_fields, file_name='txin_detail',
+                        track_file='/txin_detail')
 
 
 
@@ -548,11 +660,11 @@ class TxoutQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=TxoutTable, percentage=88)
+        self.set_up(table=TxoutDetailTable, percentage=88)
         """
         Looping
         """
-        self.loop_logic(table=TxoutTable, fields=self.txout_detail_fields, file_name='txout_detail',
+        self.loop_logic(table=TxoutDetailTable, fields=self.txout_detail_fields, file_name='txout_detail',
                         track_file='/txout_detail')
 
 
@@ -575,6 +687,11 @@ def main():
     c = TxoutQuery(rows=0, percent=0, offset=0, floor_div=0,
                   loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
     c.txout_detail_flow()
+
+
+    d = BlockQuery(rows=0, percent=0, offset=0, floor_div=0,
+                   loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
+    d.block_flow()
 
 
 main()
