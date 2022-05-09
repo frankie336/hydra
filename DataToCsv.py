@@ -30,10 +30,10 @@ pymysql.install_as_MySQLdb()
 _dir = os.getcwd()
 Base = declarative_base()
 
-engine = create_engine("mysql://abe:Abe2262001$@127.0.0.1/abe",echo = False,encoding='utf8')
-
-
-
+creds=Credentials()
+USERNAME = creds.abe_mysql_user()
+PASSWORD = creds.abe_mysql_pass()
+engine = create_engine('mysql://'+USERNAME+':'+PASSWORD+'@127.0.0.1/abe',echo = False,encoding='utf8')
 
 """
 
@@ -148,8 +148,6 @@ class BlockTxinTable(Base):
     block_id = Column(DECIMAL(14,0), primary_key=True)
     txin_id = Column(DECIMAL(26, 0))
     out_block_id = Column(DECIMAL(14, 0))
-
-
 
 """
 mysql> describe chain;
@@ -295,7 +293,6 @@ class OrphanBlockTable(Base):
     __tablename__ = 'orphan_block'
     block_id = Column(DECIMAL(14,0),primary_key=True)
     block_hashPrev = Column(BINARY(32))
-
 
 
 """
@@ -1408,8 +1405,6 @@ class TxSeqQuery(QueriesBase):
 
 
 
-
-
 class TxinQuery(QueriesBase):
     def __init__(self, rows, percent, offset, floor_div,
                  loop_floor_range, remainder, chunks,
@@ -1618,10 +1613,6 @@ class TxoutSeqQuery(QueriesBase):
         """
         self.loop_logic(table=TxoutSeqTable, fields=self.txout_seq_fields, file_name='txout_seq',
                         track_file='/txout_seq')
-
-
-
-
 
 
 

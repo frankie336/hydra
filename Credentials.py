@@ -32,6 +32,3 @@ class Credentials():
 
         return self.__abe_mysql_pass
 
-
-a = Credentials()
-print(a.btcd_rpc_pass())
