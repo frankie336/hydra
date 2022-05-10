@@ -10,8 +10,8 @@ def reset():
     2. Deletes Existing .csv output
     """
 
-    tracking_files = glob.glob("/home/prime/PycharmProjects/bitcoin/tracking/*")
-    csv_files = glob.glob("/home/prime/PycharmProjects/bitcoin/output/*")
+    tracking_files = glob.glob(_dir + '/tracking/*')
+    csv_files = glob.glob(_dir + '/output/*')
 
     print(tracking_files,'\n',
           csv_files)

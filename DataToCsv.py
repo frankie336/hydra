@@ -560,9 +560,6 @@ class TxoutSeqTable(Base):
 
 
 
-
-
-
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -1013,7 +1010,7 @@ class BlockQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=BlockTable, percentage=88)
+        self.set_up(table=BlockTable, percentage=1)
         """
         Looping
         """
@@ -1043,7 +1040,7 @@ class BlockNextQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=BlockNextTable, percentage=88)
+        self.set_up(table=BlockNextTable, percentage=1)
         """
         Looping
         """
@@ -1071,7 +1068,7 @@ class BlockSeqQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=BlockSeqTable, percentage=88)
+        self.set_up(table=BlockSeqTable, percentage=1)
         """
         Looping
         """
@@ -1098,7 +1095,7 @@ class BlockTxQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=BlockTxTable, percentage=88)
+        self.set_up(table=BlockTxTable, percentage=1)
         """
         Looping
         """
@@ -1124,7 +1121,7 @@ class BlockTxinQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=BlockTxinTable, percentage=88)
+        self.set_up(table=BlockTxinTable, percentage=1)
         """
         Looping
         """
@@ -1151,7 +1148,7 @@ class ChainQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=ChainTable, percentage=88)
+        self.set_up(table=ChainTable, percentage=1)
         """
         Looping
         """
@@ -1179,7 +1176,7 @@ class ChainCandidateQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=ChainCandidateTable, percentage=88)
+        self.set_up(table=ChainCandidateTable, percentage=1)
         """
         Looping
         """
@@ -1207,7 +1204,7 @@ class ChainSeqQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=ChainSeqTable, percentage=88)
+        self.set_up(table=ChainSeqTable, percentage=1)
         """
         Looping
         """
@@ -1235,7 +1232,7 @@ class ChainSummaryQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=ChainSumaryTable, percentage=88)
+        self.set_up(table=ChainSumaryTable, percentage=1)
         """
         Looping
         """
@@ -1258,7 +1255,7 @@ class MultisigPubkeyQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=MultisigPubkeyTable, percentage=88)
+        self.set_up(table=MultisigPubkeyTable, percentage=1)
         """
         Looping
         """
@@ -1286,7 +1283,7 @@ class OrphanBlockQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=OrphanBlockTable, percentage=88)
+        self.set_up(table=OrphanBlockTable, percentage=1)
         """
         Looping
         """
@@ -1313,7 +1310,7 @@ class PubkeyQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=PubkeyTable, percentage=88)
+        self.set_up(table=PubkeyTable, percentage=1)
         """
         Looping
         """
@@ -1340,7 +1337,7 @@ class PubkeySeqQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=PubkeySeqTable, percentage=88)
+        self.set_up(table=PubkeySeqTable, percentage=1)
         """
         Looping
         """
@@ -1368,7 +1365,7 @@ class TxQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=TxTable, percentage=88)
+        self.set_up(table=TxTable, percentage=1)
         """
         Looping
         """
@@ -1395,7 +1392,7 @@ class TxSeqQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=TxSeqTable, percentage=88)
+        self.set_up(table=TxSeqTable, percentage=1)
         """
         Looping
         """
@@ -1423,7 +1420,7 @@ class TxinQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=TxinTable, percentage=88)
+        self.set_up(table=TxinTable, percentage=1)
         """
         Looping
         """
@@ -1456,7 +1453,7 @@ class TxinDetailQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=TxinDetailTable, percentage=88)
+        self.set_up(table=TxinDetailTable, percentage=1)
 
         """
         Looping
@@ -1488,7 +1485,7 @@ class TxinSeqQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=TxinSeqTable, percentage=88)
+        self.set_up(table=TxinSeqTable, percentage=1)
 
         """
         Looping
@@ -1518,7 +1515,7 @@ class TxoutQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=TxoutTable, percentage=88)
+        self.set_up(table=TxoutTable, percentage=1)
 
         """
         Looping
@@ -1548,7 +1545,7 @@ class TxoutApproxQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=TxoutApproxTable, percentage=88)
+        self.set_up(table=TxoutApproxTable, percentage=1)
 
         """
         Looping
@@ -1579,7 +1576,7 @@ class TxoutDetailQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=TxoutDetailTable, percentage=88)
+        self.set_up(table=TxoutDetailTable, percentage=1)
 
         """
         Looping
@@ -1607,7 +1604,7 @@ class TxoutSeqQuery(QueriesBase):
         """
         Setting up
         """
-        self.set_up(table=TxoutSeqTable, percentage=88)
+        self.set_up(table=TxoutSeqTable, percentage=1)
         """
         Looping
         """
