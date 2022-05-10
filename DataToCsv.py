@@ -5,6 +5,7 @@ from Credentials import Credentials
 """
 General package imports
 """
+from tqdm import tqdm as tq
 import csv
 import math
 from math import floor
@@ -958,7 +959,7 @@ class QueriesBase():
         """
         Create .csv file and headers
         """
-        for x in range(self.__loop_floor_range):
+        for x in tq(range(self.__loop_floor_range)):
             self.create_base_csv(folder=_dir + '/output', filename=file_name,field_names=fields)
             """
             Append results to the .csv file
