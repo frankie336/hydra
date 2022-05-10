@@ -963,6 +963,8 @@ class QueriesBase():
         Informational
         """
         print('\n',
+              table,'\n',
+              'The total number of rows is: '+str(self.__total_rows),'\n'
               'The chunk is:', self.__chunks, '\n',
               'The loop floor is:', self.__loop_floor_range, '\n',
               'The remainder is:', remainder)
