@@ -1,0 +1,19 @@
+chain_id,chain_name,chain_code3,chain_address_version,chain_script_addr_vers,chain_magic,chain_policy,chain_decimals,chain_last_block_id,block_nNonce,block_height,prev_block_id,prev_block_hash,block_chain_work,block_num_tx,block_value_in,block_value_out,block_total_satoshis,block_total_seconds,block_satoshi_seconds,block_total_ss,block_ss_destroyed
+1,Bitcoin,BTC,00,05,f9beb4d9,Bitcoin,,41695,0,0,0,0,0,0,0,0,0,0,0,0,0
+1,Bitcoin,BTC,00,05,f9beb4d9,Bitcoin,,41695,0,0,0,0,0,0,0,0,0,0,0,0,0
+3,Namecoin,NMC,34,None Found,f9beb4fe,Namecoin,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+4,Weeds,WDS,f3,None Found,f8bfb5da,Sha256Chain,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+5,BeerTokens,BER,f2,None Found,f7bfb5db,Sha256Chain,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+6,SolidCoin,SCN,7d,None Found,deadbabe,Sha256Chain,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+7,ScTestnet,SC0,6f,None Found,cafebabe,Sha256Chain,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+8,Worldcoin,WDC,49,None Found,fbc0b6db,Sha256Chain,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+9,NovaCoin,NVC,08,None Found,e4e8e9e5,NovaCoin,6,,0,0,0,0,0,0,0,0,0,0,0,0,0
+10,CryptoCash,CAS,22,None Found,e4c6fee7,CryptoCash,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+11,Anoncoin,ANC,17,None Found,facabada,Sha256Chain,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+12,Hirocoin,HIRO,28,05,fec4b9de,Hirocoin,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+13,Bitleu,BTL,30,1b,d9e6e7e5,Bitleu,6,,0,0,0,0,0,0,0,0,0,0,0,0,0
+14,Maxcoin,MAX,6e,70,f9bebbd2,Maxcoin,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+15,Dash,DASH,4c,05,bf0c6bbd,Dash,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+16,BlackCoin,BC,19,55,70352205,BlackCoin,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+17,Unbreakablecoin,UNB,00,05,833307b1,Unbreakablecoin,,,0,0,0,0,0,0,0,0,0,0,0,0,0
+18,Californium,CF ,58,1e,0fdbbb07,Californium,,,0,0,0,0,0,0,0,0,0,0,0,0,0
