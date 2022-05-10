@@ -953,13 +953,27 @@ class QueriesBase():
 
     def loop_logic(self,table,fields,file_name,track_file):
 
+
+
         floor_div = self.floor_division(a=self.__total_rows, b=self.__chunks )
         loop_floor_range = floor_div[0]
         remainder = floor_div[1]
+
+        """
+        Informational
+        """
+        print('\n',
+              'The chunk is:', self.__chunks, '\n',
+              'The loop floor is:', self.__loop_floor_range, '\n',
+              'The remainder is:', remainder)
+
+
         """
         Create .csv file and headers
         """
+
         for x in tq(range(self.__loop_floor_range)):
+
             self.create_base_csv(folder=_dir + '/output', filename=file_name,field_names=fields)
             """
             Append results to the .csv file
@@ -977,9 +991,7 @@ class QueriesBase():
                                offset=offset,track_file=track_file)
 
 
-        print('The chunk is:',self.__chunks, '\n',
-              'The loop floor is:', self.__loop_floor_range,'\n',
-              'The remainder is:', remainder)
+
 
 
 
@@ -1640,44 +1652,44 @@ def main():
 
     c = TxoutDetailQuery(rows=0, percent=0, offset=0, floor_div=0,
                   loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    c.txout_detail_flow()
+    #c.txout_detail_flow()
 
 
     d = BlockQuery(rows=0, percent=0, offset=0, floor_div=0,
                    loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    d.block_flow()
+    #d.block_flow()
 
     e = BlockNextQuery(rows=0, percent=0, offset=0, floor_div=0,
                    loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    e.block_next_flow()
+    #e.block_next_flow()
 
     f = BlockSeqQuery(rows=0, percent=0, offset=0, floor_div=0,
                        loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    f.block_seq_flow()
+    #f.block_seq_flow()
 
     g = BlockTxQuery(rows=0, percent=0, offset=0, floor_div=0,
                       loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    g.block_tx_flow()
+    #g.block_tx_flow()
 
     h = BlockTxinQuery(rows=0, percent=0, offset=0, floor_div=0,
                      loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    h.block_txin_flow()
+    #h.block_txin_flow()
 
     h = ChainQuery(rows=0, percent=0, offset=0, floor_div=0,
                        loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    h.chain_flow()
+    #h.chain_flow()
 
     i = ChainCandidateQuery(rows=0, percent=0, offset=0, floor_div=0,
                    loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    i.chain_candidate_flow()
+    #i.chain_candidate_flow()
 
     j = ChainSeqQuery(rows=0, percent=0, offset=0, floor_div=0,
                             loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    j.chain_seq_flow()
+    #j.chain_seq_flow()
 
     k = ChainSummaryQuery(rows=0, percent=0, offset=0, floor_div=0,
                       loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    k.chain_summary_flow()
+    #k.chain_summary_flow()
 
     #l = MultisigPubkeyQuery(rows=0, percent=0, offset=0, floor_div=0,
                           #loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
@@ -1685,43 +1697,43 @@ def main():
 
     m = OrphanBlockQuery(rows=0, percent=0, offset=0, floor_div=0,
                             loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    m.orphan_block_flow()
+    #m.orphan_block_flow()
 
     n = PubkeyQuery(rows=0, percent=0, offset=0, floor_div=0,
                          loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    n.pubkey_flow()
+    #n.pubkey_flow()
 
     o = PubkeySeqQuery(rows=0, percent=0, offset=0, floor_div=0,
                     loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    o.pubkey_seq_flow()
+    #o.pubkey_seq_flow()
 
     p = TxQuery(rows=0, percent=0, offset=0, floor_div=0,
                        loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    p.tx_flow()
+    #p.tx_flow()
 
     q = TxSeqQuery(rows=0, percent=0, offset=0, floor_div=0,
                 loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    q.tx_seq_flow()
+    #q.tx_seq_flow()
 
     r = TxinQuery(rows=0, percent=0, offset=0, floor_div=0,
                    loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    r.txin_flow()
+    #r.txin_flow()
 
     s = TxinSeqQuery(rows=0, percent=0, offset=0, floor_div=0,
                   loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    s.txin_seq_flow()
+    #s.txin_seq_flow()
 
     t = TxoutQuery(rows=0, percent=0, offset=0, floor_div=0,
                      loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    t.txout_flow()
+    #t.txout_flow()
 
     u = TxoutApproxQuery(rows=0, percent=0, offset=0, floor_div=0,
                    loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    u.txout_approx_flow()
+    #u.txout_approx_flow()
 
     v = TxoutSeqQuery(rows=0, percent=0, offset=0, floor_div=0,
                          loop_floor_range=0, remainder=0, chunks=0, clean_dict=None)
-    v.txout_seq_flow()
+    #v.txout_seq_flow()
 
 
 main()
